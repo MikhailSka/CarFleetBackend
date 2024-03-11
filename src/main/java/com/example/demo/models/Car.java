@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "Cars")
+@Table(name = "cars")
 public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +20,13 @@ public class Car {
     private String make;
     private String model;
     private int year;
+    @Column(name = "registration_number")
     private String registrationNumber;
     private String status;
     private int distance;
+    @Column(name = "minute_cost")
     private BigDecimal minuteCost;
+    @Column(name = "kilometer_cost")
     private BigDecimal kilometerCost;
 }
 

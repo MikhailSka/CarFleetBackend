@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "Trips")
+@Table(name = "trips")
 public class Trip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,9 +24,14 @@ public class Trip {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @Column(name = "start_time")
     private Timestamp startTime;
+    @Column(name = "end_time")
     private Timestamp endTime;
+    @Column(name = "start_distance")
     private int startDistance;
+    @Column(name = "end_distance")
     private int endDistance;
+    @Column(name = "trip_cost")
     private BigDecimal tripCost;
 }
