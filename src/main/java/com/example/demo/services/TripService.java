@@ -1,9 +1,11 @@
 package com.example.demo.services;
 
+import com.example.demo.exceptions.InternalServerErrorException;
 import com.example.demo.models.Trip;
 import com.example.demo.repository.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -17,18 +19,38 @@ public class TripService {
     }
 
     public List<Trip> getAllTrips() {
-        return tripRepository.findAll();
+        try {
+            return tripRepository.findAll();
+        } catch (Exception e) {
+            // Log the exception
+            throw new InternalServerErrorException("An error occurred while retrieving trips");
+        }
     }
 
     public Optional<Trip> getTripById(int id) {
-        return tripRepository.findById(id);
+        try {
+            return tripRepository.findById(id);
+        } catch (Exception e) {
+            // Log the exception
+            throw new InternalServerErrorException("An error occurred while retrieving the trip by id: " + id);
+        }
     }
 
     public Trip saveTrip(Trip trip) {
-        return tripRepository.save(trip);
+        try {
+            return tripRepository.save(trip);
+        } catch (Exception e) {
+            // Log the exception
+            throw new InternalServerErrorException("An error occurred while saving the trip");
+        }
     }
 
     public void deleteTrip(int id) {
-        tripRepository.deleteById(id);
+        try {
+            tripRepository.deleteById(id);
+        } catch (Exception e) {
+            // Log the exception
+            throw new InternalServerErrorException("An error occurred while deleting the trip with id: " + id);
+        }
     }
 }

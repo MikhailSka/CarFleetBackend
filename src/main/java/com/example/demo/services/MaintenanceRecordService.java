@@ -1,9 +1,11 @@
 package com.example.demo.services;
 
+import com.example.demo.exceptions.InternalServerErrorException;
 import com.example.demo.models.MaintenanceRecord;
 import com.example.demo.repository.MaintenanceRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -17,18 +19,38 @@ public class MaintenanceRecordService {
     }
 
     public List<MaintenanceRecord> getAllMaintenanceRecords() {
-        return maintenanceRecordRepository.findAll();
+        try {
+            return maintenanceRecordRepository.findAll();
+        } catch (Exception e) {
+            // Log the exception
+            throw new InternalServerErrorException("An error occurred while retrieving maintenance records");
+        }
     }
 
     public Optional<MaintenanceRecord> getMaintenanceRecordById(int id) {
-        return maintenanceRecordRepository.findById(id);
+        try {
+            return maintenanceRecordRepository.findById(id);
+        } catch (Exception e) {
+            // Log the exception
+            throw new InternalServerErrorException("An error occurred while retrieving the maintenance record by id: " + id);
+        }
     }
 
     public MaintenanceRecord saveMaintenanceRecord(MaintenanceRecord maintenanceRecord) {
-        return maintenanceRecordRepository.save(maintenanceRecord);
+        try {
+            return maintenanceRecordRepository.save(maintenanceRecord);
+        } catch (Exception e) {
+            // Log the exception
+            throw new InternalServerErrorException("An error occurred while saving the maintenance record");
+        }
     }
 
     public void deleteMaintenanceRecord(int id) {
-        maintenanceRecordRepository.deleteById(id);
+        try {
+            maintenanceRecordRepository.deleteById(id);
+        } catch (Exception e) {
+            // Log the exception
+            throw new InternalServerErrorException("An error occurred while deleting the maintenance record with id: " + id);
+        }
     }
 }

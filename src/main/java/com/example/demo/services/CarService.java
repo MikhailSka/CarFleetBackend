@@ -1,9 +1,11 @@
 package com.example.demo.services;
 
+import com.example.demo.exceptions.InternalServerErrorException;
 import com.example.demo.models.Car;
 import com.example.demo.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -17,18 +19,38 @@ public class CarService {
     }
 
     public List<Car> getAllCars() {
-        return carRepository.findAll();
+        try {
+            return carRepository.findAll();
+        } catch (Exception e) {
+            // Log the exception
+            throw new InternalServerErrorException("An error occurred while retrieving cars");
+        }
     }
 
     public Optional<Car> getCarById(int id) {
-        return carRepository.findById(id);
+        try {
+            return carRepository.findById(id);
+        } catch (Exception e) {
+            // Log the exception
+            throw new InternalServerErrorException("An error occurred while retrieving the car by id: " + id);
+        }
     }
 
     public Car saveCar(Car car) {
-        return carRepository.save(car);
+        try {
+            return carRepository.save(car);
+        } catch (Exception e) {
+            // Log the exception
+            throw new InternalServerErrorException("An error occurred while saving the car");
+        }
     }
 
     public void deleteCar(int id) {
-        carRepository.deleteById(id);
+        try {
+            carRepository.deleteById(id);
+        } catch (Exception e) {
+            // Log the exception
+            throw new InternalServerErrorException("An error occurred while deleting the car with id: " + id);
+        }
     }
 }
