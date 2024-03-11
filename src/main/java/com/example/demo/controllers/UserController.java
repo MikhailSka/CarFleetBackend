@@ -45,4 +45,33 @@ public class UserController {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    @PostMapping("/register")
+    public ResponseEntity<User> registerUser(@RequestBody User user) {
+        // Check if the username is already taken
+        Optional<User> existingUser = userService.getUserByUsername(user.getUsername());
+        if (existingUser.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT); // Username already exists
+        }
+
+        // Save the new user
+        User newUser = userService.saveUser(user);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+    }
+
+    // Login user
+    @PostMapping("/login")
+    public ResponseEntity<User> loginUser(@RequestBody User loginUser) {
+        // Find the user by username
+        Optional<User> existingUser = userService.getUserByUsername(loginUser.getUsername());
+        if (existingUser.isPresent()) {
+            // Check if the password matches
+            if (existingUser.get().getPassword().equals(loginUser.getPassword())) {
+                return new ResponseEntity<>(existingUser.get(), HttpStatus.OK); // Login successful
+            } else {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED); // Incorrect password
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // User not found
+        }
+    }
 }
