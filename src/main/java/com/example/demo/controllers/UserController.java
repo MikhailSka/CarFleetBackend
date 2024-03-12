@@ -22,9 +22,14 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<User>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortOrder,
+            @RequestParam(required = false) String keyword) {
         try {
-            List<User> users = userService.getAllUsers();
+            List<User> users = userService.getAllUsers(page, size, sortBy, sortOrder, keyword);
             return new ResponseEntity<>(users, HttpStatus.OK);
         } catch (InternalServerErrorException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

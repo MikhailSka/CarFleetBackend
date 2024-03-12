@@ -22,9 +22,14 @@ public class TripController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Trip>> getAllTrips() {
+    public ResponseEntity<List<Trip>> getAllTrips(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortOrder,
+            @RequestParam(required = false) String keyword) {
         try {
-            List<Trip> trips = tripService.getAllTrips();
+            List<Trip> trips = tripService.getAllTrips(page, size, sortBy, sortOrder, keyword);
             return new ResponseEntity<>(trips, HttpStatus.OK);
         } catch (InternalServerErrorException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

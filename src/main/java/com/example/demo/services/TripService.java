@@ -4,6 +4,10 @@ import com.example.demo.exceptions.InternalServerErrorException;
 import com.example.demo.models.Trip;
 import com.example.demo.repository.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,9 +22,18 @@ public class TripService {
         this.tripRepository = tripRepository;
     }
 
-    public List<Trip> getAllTrips() {
+    public List<Trip> getAllTrips(int page, int size, String sortBy, String sortOrder, String keyword) {
         try {
-            return tripRepository.findAll();
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+            if (keyword != null && !keyword.isEmpty()) {
+                Page<Trip> tripPage = tripRepository.findByLocationContainingIgnoreCase(keyword, pageable);
+                return tripPage.getContent();
+            } else {
+                Page<Trip> tripPage = tripRepository.findAll(pageable);
+                return tripPage.getContent();
+            }
         } catch (Exception e) {
             // Log the exception
             throw new InternalServerErrorException("An error occurred while retrieving trips");

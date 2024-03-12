@@ -4,6 +4,10 @@ import com.example.demo.exceptions.InternalServerErrorException;
 import com.example.demo.models.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,9 +22,18 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers() {
+    public List<User> getAllUsers(int page, int size, String sortBy, String sortOrder, String keyword) {
         try {
-            return userRepository.findAll();
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+            if (keyword != null && !keyword.isEmpty()) {
+                Page<User> userPage = userRepository.findByUsernameContainingIgnoreCase(keyword, pageable);
+                return userPage.getContent();
+            } else {
+                Page<User> userPage = userRepository.findAll(pageable);
+                return userPage.getContent();
+            }
         } catch (Exception e) {
             // Log the exception
             throw new InternalServerErrorException("An error occurred while retrieving users");

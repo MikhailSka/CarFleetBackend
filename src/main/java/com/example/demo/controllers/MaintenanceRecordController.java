@@ -22,9 +22,14 @@ public class MaintenanceRecordController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MaintenanceRecord>> getAllMaintenanceRecords() {
+    public ResponseEntity<List<MaintenanceRecord>> getAllMaintenanceRecords(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortOrder,
+            @RequestParam(required = false) String keyword) {
         try {
-            List<MaintenanceRecord> maintenanceRecords = maintenanceRecordService.getAllMaintenanceRecords();
+            List<MaintenanceRecord> maintenanceRecords = maintenanceRecordService.getAllMaintenanceRecords(page, size, sortBy, sortOrder, keyword);
             return new ResponseEntity<>(maintenanceRecords, HttpStatus.OK);
         } catch (InternalServerErrorException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
