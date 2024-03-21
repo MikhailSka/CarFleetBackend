@@ -27,13 +27,13 @@ public class TripService {
             Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
             Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
 
+            Page<Trip> tripPage;
             if (keyword != null && !keyword.isEmpty()) {
-                Page<Trip> tripPage = tripRepository.findByLocationContainingIgnoreCase(keyword, pageable);
-                return tripPage.getContent();
+                tripPage = tripRepository.searchTripsByKeyword(keyword.toLowerCase(), pageable);
             } else {
-                Page<Trip> tripPage = tripRepository.findAll(pageable);
-                return tripPage.getContent();
+                tripPage = tripRepository.findAll(pageable);
             }
+            return tripPage.getContent();
         } catch (Exception e) {
             // Log the exception
             throw new InternalServerErrorException("An error occurred while retrieving trips");

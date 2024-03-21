@@ -28,7 +28,7 @@ public class MaintenanceRecordService {
             Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
 
             if (keyword != null && !keyword.isEmpty()) {
-                Page<MaintenanceRecord> maintenanceRecordPage = maintenanceRecordRepository.findByDescriptionContainingIgnoreCase(keyword, pageable);
+                Page<MaintenanceRecord> maintenanceRecordPage = maintenanceRecordRepository.searchMaintenanceRecordsByKeyword(keyword, pageable);
                 return maintenanceRecordPage.getContent();
             } else {
                 Page<MaintenanceRecord> maintenanceRecordPage = maintenanceRecordRepository.findAll(pageable);

@@ -28,7 +28,7 @@ public class UserService {
             Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
 
             if (keyword != null && !keyword.isEmpty()) {
-                Page<User> userPage = userRepository.findByUsernameContainingIgnoreCase(keyword, pageable);
+                Page<User> userPage = userRepository.searchUsersByKeyword(keyword, pageable);
                 return userPage.getContent();
             } else {
                 Page<User> userPage = userRepository.findAll(pageable);

@@ -29,7 +29,7 @@ public class CarService {
 
             Page<Car> carPage;
             if (keyword != null && !keyword.isEmpty()) {
-                carPage = carRepository.findByModelContainingIgnoreCase(keyword, pageable);
+                carPage = carRepository.searchCarsByKeyword(keyword.toLowerCase(), pageable);
             } else {
                 carPage = carRepository.findAll(pageable);
             }
