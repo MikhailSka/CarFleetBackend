@@ -2,13 +2,13 @@ package com.example.demo.controllers;
 
 import com.example.demo.exceptions.InternalServerErrorException;
 import com.example.demo.models.Car;
+import com.example.demo.responses.GenericResponse;
 import com.example.demo.services.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -22,15 +22,15 @@ public class CarController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Car>> getAllCars(
+    public ResponseEntity<GenericResponse> getAllCars(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortOrder,
             @RequestParam(required = false) String keyword) {
         try {
-            List<Car> cars = carService.getAllCars(page, size, sortBy, sortOrder, keyword);
-            return new ResponseEntity<>(cars, HttpStatus.OK);
+            GenericResponse response = carService.getAllCars(page, size, sortBy, sortOrder, keyword);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (InternalServerErrorException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

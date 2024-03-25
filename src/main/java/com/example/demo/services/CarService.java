@@ -3,6 +3,7 @@ package com.example.demo.services;
 import com.example.demo.exceptions.InternalServerErrorException;
 import com.example.demo.models.Car;
 import com.example.demo.repository.CarRepository;
+import com.example.demo.responses.GenericResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,23 +23,28 @@ public class CarService {
         this.carRepository = carRepository;
     }
 
-    public List<Car> getAllCars(int page, int size, String sortBy, String sortOrder, String keyword) {
+    public GenericResponse getAllCars(int page, int size, String sortBy, String sortOrder, String keyword) {
         try {
             Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
             Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
 
             Page<Car> carPage;
             if (keyword != null && !keyword.isEmpty()) {
-                carPage = carRepository.searchCarsByKeyword(keyword.toLowerCase(), pageable);
+                carPage = carRepository.searchCarsByKeyword(keyword.toUpperCase(), pageable);
             } else {
                 carPage = carRepository.findAll(pageable);
             }
-            return carPage.getContent();
+
+            List<Car> cars = carPage.getContent();
+            long totalCars = carPage.getTotalElements(); // This is how you get the total count
+
+            return new GenericResponse(cars, totalCars); // Assuming you have a CarResponse class as described earlier
         } catch (Exception e) {
-            // Log the exception
+            // Log the exception and/or handle it appropriately
             throw new InternalServerErrorException("An error occurred while retrieving cars");
         }
     }
+
 
     public Optional<Car> getCarById(int id) {
         try {
@@ -66,4 +72,5 @@ public class CarService {
             throw new InternalServerErrorException("An error occurred while deleting the car with id: " + id);
         }
     }
+
 }

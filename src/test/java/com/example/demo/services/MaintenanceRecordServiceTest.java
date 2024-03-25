@@ -3,19 +3,16 @@ package com.example.demo.services;
 import com.example.demo.exceptions.InternalServerErrorException;
 import com.example.demo.models.MaintenanceRecord;
 import com.example.demo.repository.MaintenanceRecordRepository;
+import com.example.demo.responses.GenericResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -42,13 +39,19 @@ public class MaintenanceRecordServiceTest {
 
     @Test
     void getAllMaintenanceRecordsShouldReturnRecords() {
-        Page<MaintenanceRecord> maintenanceRecordPage = new PageImpl<>(Arrays.asList(maintenanceRecord));
-        when(maintenanceRecordRepository.findAll(any(PageRequest.class))).thenReturn(maintenanceRecordPage);
+        MaintenanceRecord maintenanceRecord = new MaintenanceRecord(); // Set up your maintenanceRecord with mock data
+        // Initialize maintenanceRecord properties as needed
 
-        List<MaintenanceRecord> result = maintenanceRecordService.getAllMaintenanceRecords(0, 10, "id", "asc", "");
-        assertFalse(result.isEmpty(), "Expected non-empty list of maintenance records");
-        assertEquals(1, result.size(), "Expected list size of 1");
+        Page<MaintenanceRecord> maintenanceRecordPage = new PageImpl<>(Arrays.asList(maintenanceRecord));
+        when(maintenanceRecordRepository.findAll(any(Pageable.class))).thenReturn(maintenanceRecordPage);
+
+        GenericResponse result = maintenanceRecordService.getAllMaintenanceRecords(0, 10, "id", "asc", "");
+
+        assertFalse(result.getData().isEmpty(), "Expected non-empty list of maintenance records");
+        assertEquals(1, result.getData().size(), "Expected list size of 1");
+        assertEquals(1, result.getTotal(), "Expected total count of 1");
     }
+
 
     @Test
     void getMaintenanceRecordByIdShouldReturnRecord() {

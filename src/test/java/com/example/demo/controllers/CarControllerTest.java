@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.config.TestSecurityConfig;
 import com.example.demo.models.Car;
+import com.example.demo.responses.GenericResponse;
 import com.example.demo.services.CarService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -48,7 +49,12 @@ public class CarControllerTest {
 
     @Test
     void getAllCarsShouldReturnCars() throws Exception {
-        given(carService.getAllCars(0, 10, "id", "asc", null)).willReturn(Arrays.asList(car));
+        Car car = new Car(); // Assuming you have a car object set up
+        car.setId(1); // And other necessary properties set
+
+        GenericResponse carResponse = new GenericResponse(Collections.singletonList(car), 1);
+        given(carService.getAllCars(0, 10, "id", "asc", null)).willReturn(carResponse);
+
         mockMvc.perform(get("/api/cars")
                         .param("page", "0")
                         .param("size", "10")
@@ -56,8 +62,10 @@ public class CarControllerTest {
                         .param("sortOrder", "asc"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(car.getId()));
+                .andExpect(jsonPath("$.data[0].id").value(car.getId()))
+                .andExpect(jsonPath("$.total").value(1));
     }
+
 
     @Test
     void getCarByIdShouldReturnCar() throws Exception {

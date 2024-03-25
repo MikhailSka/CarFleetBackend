@@ -2,13 +2,13 @@ package com.example.demo.controllers;
 
 import com.example.demo.exceptions.InternalServerErrorException;
 import com.example.demo.models.User;
+import com.example.demo.responses.GenericResponse;
 import com.example.demo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -22,15 +22,15 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers(
+    public ResponseEntity<GenericResponse> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortOrder,
             @RequestParam(required = false) String keyword) {
         try {
-            List<User> users = userService.getAllUsers(page, size, sortBy, sortOrder, keyword);
-            return new ResponseEntity<>(users, HttpStatus.OK);
+            GenericResponse response = userService.getAllUsers(page, size, sortBy, sortOrder, keyword);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (InternalServerErrorException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

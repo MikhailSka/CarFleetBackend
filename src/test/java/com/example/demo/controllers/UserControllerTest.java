@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.config.TestSecurityConfig;
 import com.example.demo.models.User;
+import com.example.demo.responses.GenericResponse;
 import com.example.demo.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -51,7 +52,11 @@ public class UserControllerTest {
 
     @Test
     void getAllUsersShouldReturnUsers() throws Exception {
-        given(userService.getAllUsers(0, 10, "id", "asc", null)).willReturn(Arrays.asList(user));
+        User user = new User(); // Set up your User object with mock data
+        user.setId(1); // And other necessary properties
+
+        GenericResponse userResponse = new GenericResponse(Collections.singletonList(user), 1);
+        given(userService.getAllUsers(0, 10, "id", "asc", null)).willReturn(userResponse);
 
         mockMvc.perform(get("/api/users")
                         .param("page", "0")
@@ -60,8 +65,10 @@ public class UserControllerTest {
                         .param("sortOrder", "asc"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(user.getId()));
+                .andExpect(jsonPath("$.data[0].id").value(user.getId()))
+                .andExpect(jsonPath("$.total").value(1));
     }
+
 
     @Test
     void getUserByIdShouldReturnUser() throws Exception {

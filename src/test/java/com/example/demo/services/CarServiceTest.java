@@ -3,19 +3,16 @@ package com.example.demo.services;
 import com.example.demo.exceptions.InternalServerErrorException;
 import com.example.demo.models.Car;
 import com.example.demo.repository.CarRepository;
+import com.example.demo.responses.GenericResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -42,13 +39,16 @@ public class CarServiceTest {
 
     @Test
     void getAllCarsShouldReturnCars() {
-        Page<Car> carPage = new PageImpl<>(Arrays.asList(car));
-        when(carRepository.findAll(any(PageRequest.class))).thenReturn(carPage);
+        Page<Car> carPage = new PageImpl<>(Collections.singletonList(car));
+        when(carRepository.findAll(any(Pageable.class))).thenReturn(carPage);
 
-        List<Car> result = carService.getAllCars(0, 10, "id", "asc", "");
-        assertFalse(result.isEmpty(), "Expected non-empty list of cars");
-        assertEquals(1, result.size(), "Expected list size of 1");
+        GenericResponse result = carService.getAllCars(0, 10, "id", "asc", "");
+
+        assertFalse(result.getData().isEmpty(), "Expected non-empty list of cars");
+        assertEquals(1, result.getData().size(), "Expected list size of 1");
+        assertEquals(1, result.getTotal(), "Expected total count of 1");
     }
+
 
     @Test
     void getCarByIdShouldReturnCar() {

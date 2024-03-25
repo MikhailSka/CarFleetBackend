@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.config.TestSecurityConfig;
 import com.example.demo.models.MaintenanceRecord;
+import com.example.demo.responses.GenericResponse;
 import com.example.demo.services.MaintenanceRecordService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -47,7 +48,11 @@ public class MaintenanceRecordControllerTest {
 
     @Test
     void getAllMaintenanceRecordsShouldReturnRecords() throws Exception {
-        given(maintenanceRecordService.getAllMaintenanceRecords(0, 10, "id", "asc", null)).willReturn(Arrays.asList(maintenanceRecord));
+        MaintenanceRecord maintenanceRecord = new MaintenanceRecord(); // Initialize your maintenanceRecord with test data
+        maintenanceRecord.setId(1); // And other necessary properties
+
+        GenericResponse maintenanceRecordResponse = new GenericResponse(Collections.singletonList(maintenanceRecord), 1);
+        given(maintenanceRecordService.getAllMaintenanceRecords(0, 10, "id", "asc", null)).willReturn(maintenanceRecordResponse);
 
         mockMvc.perform(get("/api/maintenance-records")
                         .param("page", "0")
@@ -56,7 +61,8 @@ public class MaintenanceRecordControllerTest {
                         .param("sortOrder", "asc"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(maintenanceRecord.getId()));
+                .andExpect(jsonPath("$.data[0].id").value(maintenanceRecord.getId()))
+                .andExpect(jsonPath("$.total").value(1));
     }
 
     @Test

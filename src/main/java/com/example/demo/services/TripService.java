@@ -3,6 +3,7 @@ package com.example.demo.services;
 import com.example.demo.exceptions.InternalServerErrorException;
 import com.example.demo.models.Trip;
 import com.example.demo.repository.TripRepository;
+import com.example.demo.responses.GenericResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +23,7 @@ public class TripService {
         this.tripRepository = tripRepository;
     }
 
-    public List<Trip> getAllTrips(int page, int size, String sortBy, String sortOrder, String keyword) {
+    public GenericResponse getAllTrips(int page, int size, String sortBy, String sortOrder, String keyword) {
         try {
             Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
             Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
@@ -33,12 +34,17 @@ public class TripService {
             } else {
                 tripPage = tripRepository.findAll(pageable);
             }
-            return tripPage.getContent();
+
+            List<Trip> trips = tripPage.getContent();
+            long totalTrips = tripPage.getTotalElements(); // This is how you get the total count
+
+            return new GenericResponse(trips, totalTrips);
         } catch (Exception e) {
             // Log the exception
             throw new InternalServerErrorException("An error occurred while retrieving trips");
         }
     }
+
 
     public Optional<Trip> getTripById(int id) {
         try {

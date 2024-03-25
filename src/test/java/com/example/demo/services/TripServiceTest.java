@@ -3,19 +3,16 @@ package com.example.demo.services;
 import com.example.demo.exceptions.InternalServerErrorException;
 import com.example.demo.models.Trip;
 import com.example.demo.repository.TripRepository;
+import com.example.demo.responses.GenericResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -41,13 +38,23 @@ public class TripServiceTest {
 
     @Test
     void getAllTripsShouldReturnTrips() {
-        Page<Trip> tripPage = new PageImpl<>(Arrays.asList(trip));
-        when(tripRepository.findAll(any(PageRequest.class))).thenReturn(tripPage);
+        // Prepare a mock Trip
+        Trip trip = new Trip();
+        trip.setId(1); // Set other necessary properties as needed
 
-        List<Trip> result = tripService.getAllTrips(0, 10, "id", "asc", "");
-        assertFalse(result.isEmpty(), "Expected non-empty list of trips");
-        assertEquals(1, result.size(), "Expected list size of 1");
+        // Mocking the Pageable response from the repository
+        Page<Trip> tripPage = new PageImpl<>(Collections.singletonList(trip));
+        when(tripRepository.findAll(any(Pageable.class))).thenReturn(tripPage);
+
+        // Call the service method
+        GenericResponse result = tripService.getAllTrips(0, 10, "id", "asc", "");
+
+        // Assertions to verify the response
+        assertFalse(result.getData().isEmpty(), "Expected non-empty list of trips");
+        assertEquals(1, result.getData().size(), "Expected list size of 1");
+        assertEquals(1, result.getTotal(), "Expected total count of 1");
     }
+
 
     @Test
     void getTripByIdShouldReturnTrip() {

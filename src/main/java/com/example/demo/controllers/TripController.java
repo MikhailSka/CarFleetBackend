@@ -2,13 +2,13 @@ package com.example.demo.controllers;
 
 import com.example.demo.exceptions.InternalServerErrorException;
 import com.example.demo.models.Trip;
+import com.example.demo.responses.GenericResponse;
 import com.example.demo.services.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -22,19 +22,20 @@ public class TripController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Trip>> getAllTrips(
+    public ResponseEntity<GenericResponse> getAllTrips(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortOrder,
             @RequestParam(required = false) String keyword) {
         try {
-            List<Trip> trips = tripService.getAllTrips(page, size, sortBy, sortOrder, keyword);
-            return new ResponseEntity<>(trips, HttpStatus.OK);
+            GenericResponse response = tripService.getAllTrips(page, size, sortBy, sortOrder, keyword);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (InternalServerErrorException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Trip> getTripById(@PathVariable int id) {

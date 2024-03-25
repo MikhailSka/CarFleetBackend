@@ -3,19 +3,16 @@ package com.example.demo.services;
 import com.example.demo.exceptions.InternalServerErrorException;
 import com.example.demo.models.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.responses.GenericResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,13 +40,17 @@ public class UserServiceTest {
 
     @Test
     void getAllUsersShouldReturnUsers() {
-        Page<User> userPage = new PageImpl<>(Arrays.asList(user));
-        when(userRepository.findAll(any(PageRequest.class))).thenReturn(userPage);
+        User user = new User(); // Set up your User with mock data
+        user.setId(1); // Initialize other properties as needed
 
-        List<User> result = userService.getAllUsers(0, 10, "id", "asc", "");
-        assertFalse(result.isEmpty(), "Expected non-empty list of users");
-        assertEquals(1, result.size(), "Expected list size of 1");
-        assertEquals(user.getUsername(), result.get(0).getUsername(), "Expected usernames to match");
+        Page<User> userPage = new PageImpl<>(Collections.singletonList(user));
+        when(userRepository.findAll(any(Pageable.class))).thenReturn(userPage);
+
+        GenericResponse result = userService.getAllUsers(0, 10, "id", "asc", "");
+
+        assertFalse(result.getData().isEmpty(), "Expected non-empty list of users");
+        assertEquals(1, result.getData().size(), "Expected list size of 1");
+        assertEquals(1, result.getTotal(), "Expected total count of 1");
     }
 
     @Test

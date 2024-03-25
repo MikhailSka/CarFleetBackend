@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.config.TestSecurityConfig;
 import com.example.demo.models.Trip;
+import com.example.demo.responses.GenericResponse;
 import com.example.demo.services.TripService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -47,7 +48,11 @@ public class TripControllerTest {
 
     @Test
     void getAllTripsShouldReturnTrips() throws Exception {
-        given(tripService.getAllTrips(0, 10, "id", "asc", null)).willReturn(Arrays.asList(trip));
+        Trip trip = new Trip(); // Setup your Trip object with mock data
+        // Initialize trip properties as needed
+
+        GenericResponse tripResponse = new GenericResponse(Collections.singletonList(trip), 1);
+        given(tripService.getAllTrips(0, 10, "id", "asc", null)).willReturn(tripResponse);
 
         mockMvc.perform(get("/api/trips")
                         .param("page", "0")
@@ -56,8 +61,10 @@ public class TripControllerTest {
                         .param("sortOrder", "asc"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(trip.getId()));
+                .andExpect(jsonPath("$.data[0].id").value(trip.getId()))
+                .andExpect(jsonPath("$.total").value(1));
     }
+
 
     @Test
     void getTripByIdShouldReturnTrip() throws Exception {
