@@ -21,7 +21,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        java-version: '11'
+        java-version: '21'
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
@@ -44,11 +44,10 @@ jobs:
       run: |
         # Add commands to generate documentation here
         # Example:
-        # mvn javadoc:javadoc
+        mvn javadoc:javadoc
 
     - name: Deploy documentation
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs
-
