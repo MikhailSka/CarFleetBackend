@@ -1,0 +1,44 @@
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+
+name: Java CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: '21'
+
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+
+    - name: Run unit tests
+      run: mvn test
+
+    - name: Static code analysis
+      run: mvn findbugs:check
+
+    - name: Linting and formatting
+      run: |
+        # Add your linting and formatting commands here
+        # For example:
+        mvn spotbugs:check
+
+    - name: Verify commits
+      uses: reviewdog/action-checkstyle@v1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
