@@ -1,0 +1,63 @@
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+
+name: Java CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2  # Używamy `uses` do pobrania akcji setup-java
+
+      # Specyfikujemy wersję Javy
+      with:
+        java-version: '11'
+
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml  # Wykonujemy lokalnie polecenie `mvn package`
+
+    - name: Run unit tests
+      run: mvn test  # Wykonujemy lokalnie polecenie `mvn test`
+
+    - name: Static code analysis
+      run: mvn findbugs:check  # Wykonujemy lokalnie polecenie `mvn findbugs:check`
+
+    - name: Linting and formatting
+      run: |
+        # Tutaj możemy umieścić komendy lintowania i formatowania
+        # Na przykład:
+        mvn spotbugs:check
+
+    - name: Generate documentation
+      run: |
+        # Tutaj możemy umieścić komendy generowania dokumentacji
+        # Na przykład:
+        mvn javadoc:javadoc
+
+    - name: Deploy documentation
+      uses: peaceiris/actions-gh-pages@v3  # Używamy `uses` do pobrania akcji peaceiris/actions-gh-pages
+
+      # Konfigurujemy zmienną środowiskową github_token z sekretem GITHUB_TOKEN
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
+        # Specyfikujemy katalog do publikacji dokumentacji
+        publish_dir: ./docs
+
+
+    - name: Publish to GitHub Packages Apache Maven
+      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
