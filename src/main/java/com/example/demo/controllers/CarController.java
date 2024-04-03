@@ -66,4 +66,16 @@ public class CarController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/{id}/rent")
+    public ResponseEntity<Void> rentCar(@PathVariable int id) {
+        try {
+            carService.rentCar(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (InternalServerErrorException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

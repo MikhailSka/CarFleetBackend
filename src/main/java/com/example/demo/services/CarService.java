@@ -66,4 +66,23 @@ public class CarService {
             throw new InternalServerErrorException("An error occurred while deleting the car with id: " + id);
         }
     }
+
+    public void rentCar(int carId) {
+        Optional<Car> optionalCar = carRepository.findById(carId);
+        if (optionalCar.isPresent()) {
+            Car car = optionalCar.get();
+            // Sprawdź, czy samochód jest dostępny do wypożyczenia
+            if (car.isAvailable()) {
+                // Ustaw dostępność samochodu na false, aby oznaczyć go jako wypożyczony
+                car.setAvailable(false);
+                // Zapisz zmiany w bazie danych
+                carRepository.save(car);
+            } else {
+                throw new IllegalStateException("Car is not available for rental.");
+            }
+        } else {
+            throw new IllegalArgumentException("Car with id " + carId + " does not exist.");
+        }
+    }
+
 }

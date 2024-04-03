@@ -28,5 +28,16 @@ public class Car {
     private BigDecimal minuteCost;
     @Column(name = "kilometer_cost")
     private BigDecimal kilometerCost;
+    private boolean available; // New field to indicate availability for rental
+
+    // Getter and setter for the 'available' field
+    public boolean isAvailable() {
+        return this.available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
 }
 
