@@ -19,24 +19,42 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set up JDK
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v2  # Używamy `uses` do pobrania akcji setup-java
+
+      # Specyfikujemy wersję Javy
       with:
         java-version: '21'
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package --file pom.xml  # Wykonujemy lokalnie polecenie `mvn package`
 
     - name: Run unit tests
-      run: mvn test
+      run: mvn test  # Wykonujemy lokalnie polecenie `mvn test`
 
     - name: Static code analysis
-      run: mvn findbugs:check
+      run: mvn findbugs:check  # Wykonujemy lokalnie polecenie `mvn findbugs:check`
 
     - name: Linting and formatting
       run: |
-        # Add your linting and formatting commands here
-        # For example:
+        # Tutaj możemy umieścić komendy lintowania i formatowania
+        # Na przykład:
         mvn spotbugs:check
+
+    - name: Generate documentation
+      run: |
+        # Tutaj możemy umieścić komendy generowania dokumentacji
+        # Na przykład:
+        mvn javadoc:javadoc
+
+    - name: Deploy documentation
+      uses: peaceiris/actions-gh-pages@v3  # Używamy `uses` do pobrania akcji peaceiris/actions-gh-pages
+
+      # Konfigurujemy zmienną środowiskową github_token z sekretem GITHUB_TOKEN
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
+        # Specyfikujemy katalog do publikacji dokumentacji
+        publish_dir: ./docs
 
     - name: Verify commits
       uses: reviewdog/action-checkstyle@v1
