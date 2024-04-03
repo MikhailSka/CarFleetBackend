@@ -21,7 +21,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        java-version: '21'
+        java-version: '11'
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
@@ -35,7 +35,7 @@ jobs:
     - name: Linting and formatting
       run: |
         # Add your linting and formatting commands here
-        # For example:
+        # Example:
         mvn spotbugs:check
 
     - name: Verify commits with Checkstyle
@@ -45,3 +45,15 @@ jobs:
         check_name: Checkstyle
         reporter: github-pr-review
         github_token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Generate documentation
+      run: |
+        # Add commands to generate documentation here
+        # Example:
+        mvn javadoc:javadoc
+
+    - name: Deploy documentation
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
