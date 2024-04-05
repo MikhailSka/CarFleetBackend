@@ -29,4 +29,5 @@ public class Car {
     @Column(name = "kilometer_cost")
     private BigDecimal kilometerCost;
 }
+//test
 
