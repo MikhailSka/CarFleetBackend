@@ -26,8 +26,8 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
-    - name: Run unit tests
-      run: mvn test
+    - name: Run unit tests with debug
+      run: mvn test -e -X
 
     - name: Static code analysis
       uses: find-sec-bugs/find-sec-bugs@v1
