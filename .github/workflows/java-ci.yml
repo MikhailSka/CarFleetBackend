@@ -12,7 +12,7 @@ jobs:
   build:
     name: Build and Test
     runs-on: ubuntu-latest
-
+    environment: Default
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 17
@@ -47,6 +47,6 @@ jobs:
         branch: gh-pages
         folder: target/site/apidocs
         clean: true
-        token: ${{ secrets.CarFleet }} 
+        token: ${{ secrets.CarFleetKey }} 
     - name: Stop Docker Service
       run: sudo service docker stop  # Stop Docker service after completion
