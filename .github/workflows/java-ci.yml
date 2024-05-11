@@ -44,8 +44,9 @@ jobs:
     - name: Deploy documentation to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@4.1.1
       with:
-        token: ${{ secrets.ACCESS_TOKEN }}
         branch: gh-pages
         folder: target/site/apidocs
+        clean: true
+        token: ${{ secrets.GITHUB_TOKEN }} 
     - name: Stop Docker Service
       run: sudo service docker stop  # Stop Docker service after completion
