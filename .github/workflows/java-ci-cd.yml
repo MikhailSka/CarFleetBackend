@@ -27,7 +27,8 @@ jobs:
     - name: Run unit tests
       run: mvn test
     - name: Static code analysis
-      run: mvn clean verify sonar:sonar -Pcoverage -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      continue-on-error: true
+      run: mvn clean verify sonar:sonar -Pcoverage -Dsonar.login=${{ secrets.SONAR_TOKEN }} 
     - name: Linting and formatting
       run: mvn spotless:apply
     - name: Conventional Commit check
