@@ -47,6 +47,6 @@ jobs:
         branch: gh-pages
         folder: target/site/apidocs
         clean: true
-        token: ${{ secrets.DocToken }} 
+        token: ${{ secrets.CarFleet }} 
     - name: Stop Docker Service
       run: sudo service docker stop  # Stop Docker service after completion
