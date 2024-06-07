@@ -27,6 +27,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '21'
+          distribution: 'temurin' # Możesz użyć również 'adopt', 'zulu' lub innych
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
@@ -61,7 +62,6 @@ jobs:
         uses: docker://justb4/jmeter:latest
         with:
           args: -n -t /github/workspace/test-plan.jmx -l /github/workspace/report.jtl
-
 
       - name: Generate HTML Report
         run: |
