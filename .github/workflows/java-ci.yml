@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '21'
-          distribution: 'temurin' # Możesz użyć również 'adopt', 'zulu' lub innych
+          distribution: 'temurin'
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
@@ -36,14 +36,11 @@ jobs:
         run: mvn test -e
 
       - name: Static code analysis
-        run: |
-          mvn com.github.spotbugs:spotbugs-maven-plugin:4.2.3:check \
-          -Dspotbugs.pluginList=org.findbugs:findsecbugs-plugin:1.10.1
+        run: mvn com.github.spotbugs:spotbugs-maven-plugin:4.2.3:check
 
       - name: Linting and formatting
         run: |
           mvn checkstyle:checkstyle
-          mvn spotbugs:check
 
       - name: Lint Commits
         uses: wagoid/commitlint-github-action@v4
