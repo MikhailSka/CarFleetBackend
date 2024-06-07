@@ -1,6 +1,3 @@
-# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
-# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
-
 name: Java CI
 
 on:
@@ -15,39 +12,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up JDK
-      uses: actions/setup-java@v2
-      with:
-        java-version: '21'
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
 
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
 
-    - name: Run unit tests
-      run: mvn test
+      - name: Run unit tests
+        run: mvn test
 
-    - name: Static code analysis
-      uses: find-sec-bugs/find-sec-bugs@v1
+      - name: Static code analysis
+        uses: find-sec-bugs/find-sec-bugs@v1
 
-    - name: Linting and formatting
-      run: |
-        mvn checkstyle:checkstyle
-        mvn spotbugs:check
+      - name: Linting and formatting
+        run: |
+          mvn checkstyle:checkstyle
+          mvn spotbugs:check
 
-    - name: Commitlint
-      uses: Waza-Works/commitlint-github-action@v3
+      - name: Commitlint
+        uses: Waza-Works/commitlint-github-action@v3
 
-    - name: Generate documentation
-      run: |
-        # Add commands to generate documentation here
-        # Example:
-        mvn javadoc:javadoc
+      - name: Generate documentation
+        run: |
+          mvn javadoc:javadoc
 
-    - name: Deploy documentation
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs
+      - name: Deploy documentation
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+
+      - name: Run load tests
+        uses: docker://justb4/jmeter:latest
+        with:
+          args: -n -t /github/workspace/test-plan.jmx -l /github/workspace/report.jtl
+
+      - name: Generate HTML Report
+        run: |
+          mkdir /github/workspace/jmeter-report
+          docker run --rm -v ${{ github.workspace }}:/tests -w /tests justb4/jmeter:latest jmeter -g /tests/report.jtl -o /tests/jmeter-report
+
+      - name: Upload HTML Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: jmeter-html-report
+          path: jmeter-report
