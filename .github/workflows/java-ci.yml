@@ -35,15 +35,17 @@ jobs:
         run: mvn test
 
       - name: Static code analysis
-        uses: find-sec-bugs/find-sec-bugs@v1
+        run: |
+          mvn com.github.spotbugs:spotbugs-maven-plugin:4.2.3:check \
+          -Dspotbugs.pluginList=org.findbugs:findsecbugs-plugin:1.10.1
 
       - name: Linting and formatting
         run: |
           mvn checkstyle:checkstyle
           mvn spotbugs:check
 
-      - name: Commitlint
-        uses: Waza-Works/commitlint-github-action@v3
+      - name: Lint Commits
+        uses: wagoid/commitlint-github-action@v4
 
       - name: Generate documentation
         run: |
