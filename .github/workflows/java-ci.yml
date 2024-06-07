@@ -62,6 +62,7 @@ jobs:
         with:
           args: -n -t /github/workspace/test-plan.jmx -l /github/workspace/report.jtl
 
+
       - name: Generate HTML Report
         run: |
           mkdir /github/workspace/jmeter-report
