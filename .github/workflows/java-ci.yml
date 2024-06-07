@@ -27,12 +27,13 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '21'
-          distribution: 'temurin'
+          distribution: 'temurin' # Możesz użyć również 'adopt', 'zulu' lub innych
+
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
       - name: Run unit tests
-        run: mvn test
+        run: mvn test -e
 
       - name: Static code analysis
         run: |
