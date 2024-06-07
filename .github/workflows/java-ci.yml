@@ -26,7 +26,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: '21'
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Build with Maven
@@ -39,15 +39,13 @@ jobs:
         run: mvn com.github.spotbugs:spotbugs-maven-plugin:4.2.3:check
 
       - name: Linting and formatting
-        run: |
-          mvn checkstyle:checkstyle
+        run: mvn checkstyle:checkstyle
 
       - name: Lint Commits
         uses: wagoid/commitlint-github-action@v4
 
       - name: Generate documentation
-        run: |
-          mvn javadoc:javadoc
+        run: mvn javadoc:javadoc
 
       - name: Deploy documentation
         uses: peaceiris/actions-gh-pages@v3
